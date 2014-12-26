@@ -1,0 +1,38 @@
+#' Minimum avalanching site
+#' 
+#' Find out if there exists a avalanching site nearby. If not, return (-1,-1). If 
+#' it does, return the minimum avalanching site coordinates. 
+#'
+#' @param x    x parameter of the selected point
+#' @param y    y parameter of the selected point
+#' @param height    topography parameter 
+#' @return     the coordinates of the avalanching site. 
+#'             If there are more than one points satisfying avalanching requirement,
+#'             return the one with minimum angle to the selected point
+#'             If no avalanching site is found, return \code{c(-1,-1)}
+#' @details    Avalanching is defined as the region that is equal to or higher than
+#'             30 degrees to the highest point nearby.
+#' 
+#' @export
+#' @examples
+#' height=topo(100,100); ava.site.min(10,35,height)
+#' 
+#' 
+ava.site.min = function (x,y,height) { 
+  if(x-1<1) {x=x+97} # setting dynamic boundaries. Making sure m is within the board
+  if(y-1<1) {y=y+97}
+  if(x+1>100) {x=x-98}
+  if(y+1>100) {y=y-98}
+  m=matrix(c(x-1,y,x+1,y,x,y-1,x,y+1),nrow=4,byrow=T)
+  min.height=10 # arbitrarily large number
+  min.x=-1
+  min.y=-1
+  for(i in c(1:4)){
+    if ( (height[x,y]-height[m[i,1],m[i,2]]) > tan(pi/6) && height[m[i,1],m[i,2]]< min.height){
+      min.x=m[i,1]
+      min.y=m[i,2]
+      min.height=height[m[i,1],m[i,2]]
+    } 
+  }
+  return(c(min.x,min.y))
+}
